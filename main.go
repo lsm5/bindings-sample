@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/containers/libpod/v2/libpod/define"
 	"github.com/containers/libpod/v2/pkg/bindings"
 	"github.com/containers/libpod/v2/pkg/bindings/containers"
 	"github.com/containers/libpod/v2/pkg/bindings/images"
@@ -34,6 +35,7 @@ func newBinding() *binding {
 
 func main() {
 	rawImage := "quay.io/libpod/alpine_nginx:latest"
+	running := define.ContainerStateRunning
 	fmt.Println("Welcome to Go bindings tutorial")
 	b := newBinding()
 	err := b.NewConnection()
@@ -43,6 +45,7 @@ func main() {
 	}
 
 	// Pull image
+	fmt.Println("Pulling image...")
 	_, err = images.Pull(b.conn, rawImage, entities.ImagePullOptions{})
 	if err != nil {
 		fmt.Println(err)
@@ -56,6 +59,7 @@ func main() {
 		fmt.Println(err)
 	}
 	// Container start
+	fmt.Println("Starting nginx container...")
 	err = containers.Start(b.conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -69,14 +73,27 @@ func main() {
 	fmt.Printf("Container source image is %s\n", ctrData.ImageName)
 	fmt.Printf("Container running status is %s\n", ctrData.State.Status)
 
-	// Container pause
-	//crun failure
-	err = containers.Pause(b.conn, r.ID)
+	_, err = containers.Wait(b.conn, r.ID, &running)
 	if err != nil {
 		fmt.Println(err)
 	}
 
+	// Container pause
+	//crun failure
+	fmt.Println("Trying to pause container...")
+	err = containers.Pause(b.conn, r.ID)
+	if err != nil {
+		fmt.Println(err)
+		return
+		ctrData, err = containers.Inspect(b.conn, r.ID, nil)
+		if err != nil {
+			fmt.Println(err)
+		}
+		fmt.Printf("Container running status is now %s\n", ctrData.State.Status)
+	}
+
 	// Container stop
+	fmt.Println("Trying to stop container...")
 	err = containers.Stop(b.conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)
