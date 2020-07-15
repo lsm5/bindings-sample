@@ -34,7 +34,7 @@ func newBinding() *binding {
 }
 
 func main() {
-	rawImage := "quay.io/libpod/alpine_nginx:latest"
+	rawImage := "registry.fedoraproject.org/fedora:latest"
 	running := define.ContainerStateRunning
 	fmt.Println("Welcome to Go bindings tutorial")
 	b := newBinding()
@@ -59,7 +59,7 @@ func main() {
 		fmt.Println(err)
 	}
 	// Container start
-	fmt.Println("Starting nginx container...")
+	fmt.Println("Starting Fedora container...")
 	err = containers.Start(b.conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -70,7 +70,7 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Printf("Container source image is %s\n", ctrData.ImageName)
+	fmt.Printf("Container uses image %s\n", ctrData.ImageName)
 	fmt.Printf("Container running status is %s\n", ctrData.State.Status)
 
 	_, err = containers.Wait(b.conn, r.ID, &running)
@@ -78,22 +78,8 @@ func main() {
 		fmt.Println(err)
 	}
 
-	// Container pause
-	//crun failure
-	fmt.Println("Trying to pause container...")
-	err = containers.Pause(b.conn, r.ID)
-	if err != nil {
-		fmt.Println(err)
-		return
-		ctrData, err = containers.Inspect(b.conn, r.ID, nil)
-		if err != nil {
-			fmt.Println(err)
-		}
-		fmt.Printf("Container running status is now %s\n", ctrData.State.Status)
-	}
-
 	// Container stop
-	fmt.Println("Trying to stop container...")
+	fmt.Println("Stopping the container...")
 	err = containers.Stop(b.conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)
@@ -103,4 +89,5 @@ func main() {
 		fmt.Println(err)
 	}
 	fmt.Printf("Container running status is now %s\n", ctrData.State.Status)
+
 }
