@@ -201,46 +201,93 @@ Example Seven -- Stop Container
 
 Complete Sample:
 ```golang
+package main
+
+import (
+        "context"
+        "fmt"
+        "os"
+
+        "github.com/containers/libpod/v2/libpod/define"
+        "github.com/containers/libpod/v2/pkg/bindings"
+        "github.com/containers/libpod/v2/pkg/bindings/containers"
+        "github.com/containers/libpod/v2/pkg/bindings/images"
+        "github.com/containers/libpod/v2/pkg/domain/entities"
+        "github.com/containers/libpod/v2/pkg/specgen"
+)
+
 func main() {
-        //Specify the image to pull
-        rawImage := "registry.fedoraproject.org/fedora:latest"
-        
         fmt.Println("Welcome to Go bindings tutorial")
-        b := newBinding()
-        err := b.NewConnection()
+
+        // Get Podman socket location
+        sock_dir := os.Getenv("XDG_RUNTIME_DIR")
+        socket := "unix://" + sock_dir + "/podman/podman.sock"
+
+        // Connect to Podman socket
+        conn, err := bindings.NewConnection(context.Background(), socket)
         if err != nil {
                 fmt.Println(err)
                 return
         }
 
         // Pull image
+        rawImage := "registry.fedoraproject.org/fedora:latest"
         fmt.Println("Pulling image...")
-        _, err = images.Pull(b.conn, rawImage, entities.ImagePullOptions{})
+        _, err = images.Pull(conn, rawImage, entities.ImagePullOptions{})
         if err != nil {
                 fmt.Println(err)
+                return
         }
 
-        // Create Container spec
+        // TODO: Insert Image List code here
+
+        // Container create
         s := specgen.NewSpecGenerator(rawImage, false)
         s.Terminal = true
-        // Create container
-        r, err := containers.CreateWithSpec(b.conn, s)
+        r, err := containers.CreateWithSpec(conn, s)
         if err != nil {
                 fmt.Println(err)
+                return
         }
+
         // Container start
         fmt.Println("Starting Fedora container...")
-        err = containers.Start(b.conn, r.ID, nil)
+        err = containers.Start(conn, r.ID, nil)
         if err != nil {
                 fmt.Println(err)
+                return
         }
 
         // Container inspect
-        ctrData, err := containers.Inspect(b.conn, r.ID, nil)
+        ctrData, err := containers.Inspect(conn, r.ID, nil)
         if err != nil {
                 fmt.Println(err)
+                return
+        }
+        fmt.Printf("Container uses image %s\n", ctrData.ImageName)
+        fmt.Printf("Container running status is %s\n", ctrData.State.Status)
+
+        running := define.ContainerStateRunning
+        _, err = containers.Wait(conn, r.ID, &running)
+        if err != nil {
+                fmt.Println(err)
+                return
         }
 
+        // Container stop
+        fmt.Println("Stopping the container...")
+        err = containers.Stop(conn, r.ID, nil)
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        ctrData, err = containers.Inspect(conn, r.ID, nil)
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        fmt.Printf("Container running status is now %s\n", ctrData.State.Status)
+        return
 }
 ```
 
