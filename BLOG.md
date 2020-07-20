@@ -72,11 +72,11 @@ import (
         "fmt"
         "os"
 
-        "github.com/containers/libpod/libpod/define"
-        "github.com/containers/libpod/pkg/bindings/containers"
-        "github.com/containers/libpod/pkg/bindings/images"
-        "github.com/containers/libpod/pkg/domain/entities"
-        "github.com/containers/libpod/pkg/specgen"
+        "github.com/containers/libpod/v2/libpod/define"
+        "github.com/containers/libpod/v2/pkg/bindings/containers"
+        "github.com/containers/libpod/v2/pkg/bindings/images"
+        "github.com/containers/libpod/v2/pkg/domain/entities"
+        "github.com/containers/libpod/v2/pkg/specgen"
         "github.com/containers/libpod/v2/pkg/bindings"
 )
 
