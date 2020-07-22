@@ -42,7 +42,7 @@ require github.com/containers/libpod/v2 v2.0.2 // indirect
 How do I use them
 
 In this tutorial, you will learn through basic examples how to:
-
+```
 0. Start the Podman system service
 1. Connect to the Podman system service
 2. Pull an image
@@ -52,7 +52,7 @@ In this tutorial, you will learn through basic examples how to:
 6. Stop the container
 7. Complete Sample
 8. Debugging tips
-
+```
 
 0. Start the Podman system service
 
