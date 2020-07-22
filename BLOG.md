@@ -30,6 +30,15 @@ $ go mod init example.com
 $ go get github.com/containers/libpod/v2@v2.0.2
 ```
 
+This creates a new `go.mod` file in the current directory that looks like so:
+```
+module example.com
+
+go 1.14
+
+require github.com/containers/libpod/v2 v2.0.2 // indirect
+```
+
 How do I use them
 
 In this tutorial, you will learn through basic examples how to:
@@ -41,6 +50,8 @@ In this tutorial, you will learn through basic examples how to:
 4. Create and start a container from an image
 5. Inspect the container
 6. Stop the container
+7. Complete Sample
+8. Debugging tips
 
 0. Background Setup
 
@@ -279,7 +290,12 @@ $
 ```
 
 
-6. Complete Sample:
+7. Complete Sample:
+The sample can be cloned from https://github.com/lsm5/bindings-sample . This
+repo includes the go module information required to build the code.
+
+You can also find it below for reference.
+
 ```golang
 package main
 
@@ -372,3 +388,39 @@ func main() {
 }
 ```
 
+8. Debugging tips
+To debug in a dev setup, you can start the Podman system service in debug mode
+like so:
+```bash
+$ podman --log-level=debug system service -t0
+```
+
+This will echo additional details, a snippet of which can be seen below:
+```
+INFO[0000] podman filtering at log level debug          
+DEBU[0000] Called service.PersistentPreRunE(podman --log-level=debug system service -t0) 
+DEBU[0000] Ignoring libpod.conf EventsLogger setting "/home/lsm5/.config/containers/containers.conf". Use "journald" if you want to change this setting and remove libpod.conf files. 
+DEBU[0000] Reading configuration file "/usr/share/containers/containers.conf" 
+DEBU[0000] Merged system config "/usr/share/containers/containers.conf": &{{[] [] containers-default-0.14.4 [] private enabled [CAP_AUDIT_WRITE CAP_CHOWN CAP_DAC_OVERRIDE CAP_FOWNER CAP_FSETID CAP_KILL CAP_MKNOD CAP_NET_BIND_SERVICE CAP_NET_RAW CAP_SETFCAP CAP_SETGID CAP_SETPCAP CAP_SETUID CAP_SYS_CHROOT] [] []  [] [] [] true [PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin] false false false  private k8s-file -1 slirp4netns false 2048 private /usr/share/containers/seccomp.json 65536k private host 65536} {true systemd [PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin] [/usr/libexec/podman/conmon /usr/local/libexec/podman/conmon /usr/local/lib/podman/conmon /usr/bin/conmon /usr/sbin/conmon /usr/local/bin/conmon /usr/local/sbin/conmon /run/current-system/sw/bin/conmon] ctrl-p,ctrl-q true /run/user/1000/libpod/tmp/events/events.log file [/usr/share/containers/oci/hooks.d] docker:// /pause k8s.gcr.io/pause:3.2 /usr/libexec/podman/catatonit shm   false 2048 /usr/bin/crun map[crun:[/usr/bin/crun /usr/sbin/crun /usr/local/bin/crun /usr/local/sbin/crun /sbin/crun /bin/crun /run/current-system/sw/bin/crun] kata:[/usr/bin/kata-runtime /usr/sbin/kata-runtime /usr/local/bin/kata-runtime /usr/local/sbin/kata-runtime /sbin/kata-runtime /bin/kata-runtime /usr/bin/kata-qemu /usr/bin/kata-fc] runc:[/usr/bin/runc /usr/sbin/runc /usr/local/bin/runc /usr/local/sbin/runc /sbin/runc /bin/runc /usr/lib/cri-o-runc/sbin/runc /run/current-system/sw/bin/runc]] missing false   [] [crun runc] [crun] [kata kata-runtime kata-qemu kata-fc] {false false false false false false} /etc/containers/policy.json false 3 /home/lsm5/.local/share/containers/storage/libpod 10 /run/user/1000/libpod/tmp /home/lsm5/.local/share/containers/storage/volumes} {[/usr/libexec/cni /usr/lib/cni /usr/local/lib/cni /opt/cni/bin] podman /etc/cni/net.d/}} 
+DEBU[0000] Using conmon: "/usr/bin/conmon"              
+DEBU[0000] Initializing boltdb state at /home/lsm5/.local/share/containers/storage/libpod/bolt_state.db 
+DEBU[0000] Overriding run root "/run/user/1000/containers" with "/run/user/1000" from database 
+DEBU[0000] Using graph driver overlay                   
+DEBU[0000] Using graph root /home/lsm5/.local/share/containers/storage 
+DEBU[0000] Using run root /run/user/1000                
+DEBU[0000] Using static dir /home/lsm5/.local/share/containers/storage/libpod 
+DEBU[0000] Using tmp dir /run/user/1000/libpod/tmp      
+DEBU[0000] Using volume path /home/lsm5/.local/share/containers/storage/volumes 
+DEBU[0000] Set libpod namespace to ""                   
+DEBU[0000] Not configuring container store              
+DEBU[0000] Initializing event backend file              
+DEBU[0000] using runtime "/usr/bin/runc"                
+DEBU[0000] using runtime "/usr/bin/crun"                
+WARN[0000] Error initializing configured OCI runtime kata: no valid executable found for OCI runtime kata: invalid argument 
+DEBU[0000] using runtime "/usr/bin/crun"                
+INFO[0000] Setting parallel job count to 25             
+INFO[0000] podman filtering at log level debug          
+DEBU[0000] Called service.PersistentPreRunE(podman --log-level=debug system service -t0) 
+DEBU[0000] Ignoring libpod.conf EventsLogger setting "/home/lsm5/.config/containers/containers.conf". Use "journald" if you want to change this setting and remove libpod.conf files. 
+DEBU[0000] Reading configuration file "/usr/share/containers/containers.conf" 
+```
