@@ -32,28 +32,29 @@ $ go get github.com/containers/libpod/v2@v2.0.2
 
 How do I use them
 
-In this tutorial, you will learn through a basic example how to:
-Create connection to the service
-1. Pull an image
-2. List images
-3. Create a container
-4. Start the container
+In this tutorial, you will learn through basic examples how to:
+0. Background setup
+1. Connect to the Podman system service
+2. Pull an image
+3. List images
+4. Create and start a container from an image
 5. Inspect the container
 6. Stop the container
 
-Background Setup
-Open a Terminal window and start the Podman system service:
+0. Background Setup
+
+Open a terminal window and start the Podman system service:
 ```bash
 $ podman system service -t0
 ```
 
-Open another Terminal window and check if the Podman socket exists:
+Open another terminal window and check if the Podman socket exists:
 ```bash
 $ ls -al /run/user/1000/podman
 podman.sock
 ```
 
-0. Create a connection to the system service
+1. Create a connection to the system service
 After you set up your basic main method, you need to create a connection
 that connects to the system service.  The critical piece of information
 for setting up a new connection is the endpoint. The endpoint comes in
@@ -102,12 +103,13 @@ this context to direct the bindings to your connection. This can be
 seen in the examples below.
 
 
-1. Pull an image
+2. Pull an image
+
 Next, we will pull an image using the images.Pull() binding.
 This binding takes three arguments:
-1. The context variable created earlier: conn
-2. The image name: rawImage
-3. Options for image pull: entities.ImagePullOptions{}
+    - The context variable created earlier
+    - The image name
+    - Options for image pull
 
 Append the following lines to your main() function.
 ```golang
@@ -121,7 +123,7 @@ Append the following lines to your main() function.
         }
 ```
 
-Next, we will run our code:
+Run it:
 
 ```bash
 $ go run main.go
@@ -141,14 +143,33 @@ Storing signatures
 ```
 
 
-2.  List images
+3. List images
 
-Pull an image and run the container
-connection to the socket and pull an image using the images.Pull() binding.
+
+4. Create and Start Container from Image
 To create the container spec, we use specgen.NewSpecGenerator() followed by
 calling containers.CreateWithSpec() to actually create a new container.
+specgen.NewSpecGenerator takes 2 arguments:
+    - name of the image
+    - whether it's a rootfs
 
-3.  Create and Start Container from Image
+containers.CreateWithSpec takes 2 arguments
+    - the context created earlier
+    - the spec created by NewSpecGenerator
+
+Next, the container is actually started using the containers.Start() binding.
+containers.Start() takes three args:
+    - the context
+    - the name or ID of the container created
+    - an optional parameter for detach keys
+
+After the container is started, it's a good idea to ensure the container is in
+a running state before you proceed with further operations. The
+containers.Wait() takes care of that.
+containers.Wait() takes three args:
+    - the context
+    - the name or ID of the container created
+    - container state (running/paused/stopped)
 ```golang
         // Container create
         s := specgen.NewSpecGenerator(rawImage, false)
@@ -192,7 +213,13 @@ CONTAINER ID  IMAGE                                     COMMAND    CREATED      
 ```
 
 
-4. Inspect Container
+5. Inspect Container
+Containers can be inspected using the containers.Inspect() binding.
+containers.Inspect() takes 3 args:
+    - context
+    - image name or ID
+    - optional boolean to check for container size
+
 ```golang
         // Container inspect
         ctrData, err := containers.Inspect(conn, r.ID, nil)
@@ -215,7 +242,12 @@ Container running status is running
 $
 ```
 
-5. Stop Container
+6. Stop Container
+A container can be stopped by the containers.Stop() binding.
+containers.Stop() takes 3 args:
+    - context
+    - image name or ID
+    - optional timeout
 ```golang
         // Container stop
         fmt.Println("Stopping the container...")
