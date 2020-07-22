@@ -43,7 +43,7 @@ How do I use them
 
 In this tutorial, you will learn through basic examples how to:
 
-0. Background setup
+0. Start the Podman system service
 1. Connect to the Podman system service
 2. Pull an image
 3. List images
@@ -53,7 +53,8 @@ In this tutorial, you will learn through basic examples how to:
 7. Complete Sample
 8. Debugging tips
 
-0. Background Setup
+
+0. Start the Podman system service
 
 The recommended way to start podman system service in prod mode is via systemd
 socket-activation:
@@ -73,7 +74,8 @@ $ ls -al /run/user/1000/podman
 podman.sock
 ```
 
-1. Create a connection to the system service
+1. Connect to the Podman system service
+
 After you set up your basic main method, you need to create a connection
 that connects to the system service.  The critical piece of information
 for setting up a new connection is the endpoint. The endpoint comes in
@@ -165,7 +167,9 @@ Storing signatures
 3. List images
 
 
+
 4. Create and Start Container from Image
+
 To create the container spec, we use specgen.NewSpecGenerator() followed by
 calling containers.CreateWithSpec() to actually create a new container.
 specgen.NewSpecGenerator takes 2 arguments:
@@ -233,6 +237,7 @@ CONTAINER ID  IMAGE                                     COMMAND    CREATED      
 
 
 5. Inspect Container
+
 Containers can be inspected using the containers.Inspect() binding.
 containers.Inspect() takes 3 args:
     - context
@@ -262,6 +267,7 @@ $
 ```
 
 6. Stop Container
+
 A container can be stopped by the containers.Stop() binding.
 containers.Stop() takes 3 args:
     - context
@@ -298,6 +304,7 @@ $
 
 
 7. Complete Sample:
+
 The sample can be cloned from https://github.com/lsm5/bindings-sample . This
 repo includes the go module information required to build the code.
 
@@ -396,6 +403,7 @@ func main() {
 ```
 
 8. Debugging tips
+
 To debug in a dev setup, you can start the Podman system service in debug mode
 like so:
 ```bash
