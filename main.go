@@ -55,6 +55,14 @@ func main() {
 		return
 	}
 
+	// Wait for container to run
+	running := define.ContainerStateRunning
+	_, err = containers.Wait(conn, r.ID, &running)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	// Container inspect
 	ctrData, err := containers.Inspect(conn, r.ID, nil)
 	if err != nil {
@@ -64,20 +72,17 @@ func main() {
 	fmt.Printf("Container uses image %s\n", ctrData.ImageName)
 	fmt.Printf("Container running status is %s\n", ctrData.State.Status)
 
-	running := define.ContainerStateRunning
-	_, err = containers.Wait(conn, r.ID, &running)
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-
 	// Container stop
 	fmt.Println("Stopping the container...")
-	err = containers.Stop(conn, r.ID, nil)
+	err = containers.Stop(conn, "foo", nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
+	code, err := bindings.CheckResponseCode(err)
+	fmt.Printf("Stopping container gave HTTP status %d\n", code)
+	return
+
 	ctrData, err = containers.Inspect(conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)

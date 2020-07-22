@@ -127,6 +127,23 @@ connection to the socket and pull an image using the images.Pull() binding.
 To create the container spec, we use specgen.NewSpecGenerator() followed by
 calling containers.CreateWithSpec() to actually create a new container.
 
+```bash
+$ go run main.go
+Welcome to Go bindings tutorial
+Pulling image...
+$
+```
+
+The system service side should echo messages like so:
+```bash
+Trying to pull registry.fedoraproject.org/fedora:latest...
+Getting image source signatures
+Copying blob dd9f43919ba0 done
+Copying config 00ff39a8bf done
+Writing manifest to image destination
+Storing signatures
+```
+
 
 Example Two -- List Images
 
@@ -141,11 +158,7 @@ Example Three -- Create and Start Container from Image
                 fmt.Println(err)
                 return
         }
-```
 
-
-Example Four -- Start Container
-```golang
         // Container start
         fmt.Println("Starting Fedora container...")
         err = containers.Start(conn, r.ID, nil)
@@ -153,6 +166,29 @@ Example Four -- Start Container
                 fmt.Println(err)
                 return
         }
+
+        running := define.ContainerStateRunning
+        _, err = containers.Wait(conn, r.ID, &running)
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+```
+
+Run it:
+```bash
+$ go run main.go
+Welcome to Go bindings tutorial
+Pulling image...
+Starting Fedora container...
+$
+```
+
+Check if the container is running:
+```bash
+$ podman ps
+CONTAINER ID  IMAGE                                     COMMAND    CREATED                 STATUS                     PORTS   NAMES
+665831d31e90  registry.fedoraproject.org/fedora:latest  /bin/bash  Less than a second ago  Up Less than a second ago          dazzling_mclean
 ```
 
 
@@ -168,18 +204,16 @@ Example Five -- Inspect Container
         fmt.Printf("Container running status is %s\n", ctrData.State.Status)
 ```
 
-
-Example Six -- Wait for Container to Run
-```golang
-        // Wait for container to run
-        running := define.ContainerStateRunning
-        _, err = containers.Wait(conn, r.ID, &running)
-        if err != nil {
-                fmt.Println(err)
-                return
-        }
+Run it:
+```bash
+$ go run main.go
+Welcome to Go bindings tutorial
+Pulling image...
+Starting Fedora container...
+Container uses image registry.fedoraproject.org/fedora:latest
+Container running status is running
+$
 ```
-
 
 Example Seven -- Stop Container
 ```golang
@@ -197,6 +231,20 @@ Example Seven -- Stop Container
         }
         fmt.Printf("Container running status is now %s\n", ctrData.State.Status)
 ```
+
+Run it:
+```bash
+$ go run main.go
+Welcome to Go bindings tutorial
+Pulling image...
+Starting Fedora container...
+Container uses image registry.fedoraproject.org/fedora:latest
+Container running status is running
+Stopping the container...
+Container running status is now exited
+$
+```
+
 
 
 Complete Sample:
@@ -258,6 +306,14 @@ func main() {
                 return
         }
 
+
+        running := define.ContainerStateRunning
+        _, err = containers.Wait(conn, r.ID, &running)
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+
         // Container inspect
         ctrData, err := containers.Inspect(conn, r.ID, nil)
         if err != nil {
@@ -266,13 +322,6 @@ func main() {
         }
         fmt.Printf("Container uses image %s\n", ctrData.ImageName)
         fmt.Printf("Container running status is %s\n", ctrData.State.Status)
-
-        running := define.ContainerStateRunning
-        _, err = containers.Wait(conn, r.ID, &running)
-        if err != nil {
-                fmt.Println(err)
-                return
-        }
 
         // Container stop
         fmt.Println("Stopping the container...")
