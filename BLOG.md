@@ -192,7 +192,7 @@ CONTAINER ID  IMAGE                                     COMMAND    CREATED      
 ```
 
 
-Example Five -- Inspect Container
+Example Four -- Inspect Container
 ```golang
         // Container inspect
         ctrData, err := containers.Inspect(conn, r.ID, nil)
@@ -215,7 +215,7 @@ Container running status is running
 $
 ```
 
-Example Seven -- Stop Container
+Example Five -- Stop Container
 ```golang
         // Container stop
         fmt.Println("Stopping the container...")
@@ -244,7 +244,6 @@ Stopping the container...
 Container running status is now exited
 $
 ```
-
 
 
 Complete Sample:
