@@ -55,7 +55,14 @@ In this tutorial, you will learn through basic examples how to:
 
 0. Background Setup
 
-Open a terminal window and start the Podman system service:
+The recommended way to start podman system service in prod mode is via systemd
+socket-activation:
+```bash
+$ systemctl --user start podman.socket
+```
+
+But for purposes of this demo, we will start the service using the podman
+command itself. Open a terminal window and start the Podman system service:
 ```bash
 $ podman system service -t0
 ```
@@ -395,7 +402,7 @@ like so:
 $ podman --log-level=debug system service -t0
 ```
 
-This will echo additional details, a snippet of which can be seen below:
+This will echo additional messages, a snippet of which can be seen below:
 ```
 INFO[0000] podman filtering at log level debug          
 DEBU[0000] Called service.PersistentPreRunE(podman --log-level=debug system service -t0) 
@@ -424,3 +431,49 @@ DEBU[0000] Called service.PersistentPreRunE(podman --log-level=debug system serv
 DEBU[0000] Ignoring libpod.conf EventsLogger setting "/home/lsm5/.config/containers/containers.conf". Use "journald" if you want to change this setting and remove libpod.conf files. 
 DEBU[0000] Reading configuration file "/usr/share/containers/containers.conf" 
 ```
+
+If the Podman system service has been started via systemd socket activation,
+you can view the logs using journalctl. The logs after a sample run look like so:
+
+```bash
+$ journalctl --user --no-pager -u podman.socket
+-- Reboot --
+Jul 22 13:50:40 nagato.nanadai.me systemd[1048]: Listening on Podman API Socket.
+$
+```
+
+```bash
+$ journalctl --user --no-pager -u podman.service
+Jul 22 13:50:53 nagato.nanadai.me systemd[1048]: Starting Podman API Service...
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume 38480630a8bdaa3e1a0ebd34c94038591b0d7ad994b37be5b4f2072bb6ef0879: error acquiring lock 0 for volume 38480630a8bdaa3e1a0ebd34c94038591b0d7ad994b37be5b4f2072bb6ef0879: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume 47d410af4d762a0cc456a89e58f759937146fa3be32b5e95a698a1d4069f4024: error acquiring lock 0 for volume 47d410af4d762a0cc456a89e58f759937146fa3be32b5e95a698a1d4069f4024: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume 86e73f082e344dad38c8792fb86b2017c4f133f2a8db87f239d1d28a78cf0868: error acquiring lock 0 for volume 86e73f082e344dad38c8792fb86b2017c4f133f2a8db87f239d1d28a78cf0868: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume 9a16ea764be490a5563e384d9074ab0495e4d9119be380c664037d6cf1215631: error acquiring lock 0 for volume 9a16ea764be490a5563e384d9074ab0495e4d9119be380c664037d6cf1215631: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume bfd6b2a97217f8655add13e0ad3f6b8e1c79bc1519b7a1e15361a107ccf57fc0: error acquiring lock 0 for volume bfd6b2a97217f8655add13e0ad3f6b8e1c79bc1519b7a1e15361a107ccf57fc0: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: time="2020-07-22T13:50:54-04:00" level=error msg="Error refreshing volume f9b9f630982452ebcbed24bd229b142fbeecd5d4c85791fca440b21d56fef563: error acquiring lock 0 for volume f9b9f630982452ebcbed24bd229b142fbeecd5d4c85791fca440b21d56fef563: file exists"
+Jul 22 13:50:54 nagato.nanadai.me podman[1527]: Trying to pull registry.fedoraproject.org/fedora:latest...
+Jul 22 13:50:55 nagato.nanadai.me podman[1527]: Getting image source signatures
+Jul 22 13:50:55 nagato.nanadai.me podman[1527]: Copying blob sha256:dd9f43919ba05f05d4f783c31e83e5e776c4f5d29dd72b9ec5056b9576c10053
+Jul 22 13:50:55 nagato.nanadai.me podman[1527]: Copying config sha256:00ff39a8bf19f810a7e641f7eb3ddc47635913a19c4996debd91fafb6b379069
+Jul 22 13:50:55 nagato.nanadai.me podman[1527]: Writing manifest to image destination
+Jul 22 13:50:55 nagato.nanadai.me podman[1527]: Storing signatures
+Jul 22 13:50:55 nagato.nanadai.me systemd[1048]: podman.service: unit configures an IP firewall, but not running as root.
+Jul 22 13:50:55 nagato.nanadai.me systemd[1048]: (This warning is only shown for the first unit using IP firewalling.)
+Jul 22 13:51:15 nagato.nanadai.me systemd[1048]: podman.service: Succeeded.
+Jul 22 13:51:15 nagato.nanadai.me systemd[1048]: Finished Podman API Service.
+Jul 22 13:51:15 nagato.nanadai.me systemd[1048]: podman.service: Consumed 1.339s CPU time.
+$
+```
+
+
+Any issues with the bindings can be reported [upstream](https://github.com/containers/podman/issues/new/choose)
+
+
+Wrap Up
+    - Podman v2 provides a set of Go bindings to allow developers to integrate Podman
+    functionality conveniently in their Go application.
+
+    - These Go bindings need Podman system service to be running in the
+    background. This can be achieved using systemd socket activation. 
+
+    - **ANYTHING ELSE??**

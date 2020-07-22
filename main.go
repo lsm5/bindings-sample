@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	fmt.Println("Welcome to Go bindings tutorial")
+	fmt.Println("Welcome to Podman Go bindings tutorial")
 
 	// Get Podman socket location
 	sock_dir := os.Getenv("XDG_RUNTIME_DIR")
@@ -74,14 +74,11 @@ func main() {
 
 	// Container stop
 	fmt.Println("Stopping the container...")
-	err = containers.Stop(conn, "foo", nil)
+	err = containers.Stop(conn, r.ID, nil)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	code, err := bindings.CheckResponseCode(err)
-	fmt.Printf("Stopping container gave HTTP status %d\n", code)
-	return
 
 	ctrData, err = containers.Inspect(conn, r.ID, nil)
 	if err != nil {
