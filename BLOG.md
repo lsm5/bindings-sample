@@ -33,6 +33,7 @@ $ go get github.com/containers/libpod/v2@v2.0.2
 How do I use them
 
 In this tutorial, you will learn through basic examples how to:
+
 0. Background setup
 1. Connect to the Podman system service
 2. Pull an image
