@@ -474,14 +474,15 @@ $
 ```
 
 
-Any issues with the bindings can be reported [upstream](https://github.com/containers/podman/issues/new/choose)
+Any issues with the bindings can be reported [upstream](https://github.com/containers/podman/issues/new/choose).
 
 
 Wrap Up
-    - Podman v2 provides a set of Go bindings to allow developers to integrate Podman
-    functionality conveniently in their Go application.
 
-    - These Go bindings need Podman system service to be running in the
-    background. This can be achieved using systemd socket activation. 
+- Podman v2 provides a set of Go bindings to allow developers to integrate Podman
+functionality conveniently in their Go application.
 
-    - **ANYTHING ELSE??**
+- These Go bindings need Podman system service to be running in the
+background. This can be achieved using systemd socket activation. 
+
+- **ANYTHING ELSE??**
