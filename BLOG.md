@@ -53,7 +53,7 @@ $ ls -al /run/user/1000/podman
 podman.sock
 ```
 
-Example Zero -- Create a connection to the system service
+0. Create a connection to the system service
 After you set up your basic main method, you need to create a connection
 that connects to the system service.  The critical piece of information
 for setting up a new connection is the endpoint. The endpoint comes in
@@ -102,7 +102,7 @@ this context to direct the bindings to your connection. This can be
 seen in the examples below.
 
 
-Example One -- Pull an image Listing images
+1. Pull an image
 Next, we will pull an image using the images.Pull() binding.
 This binding takes three arguments:
 1. The context variable created earlier: conn
@@ -121,11 +121,7 @@ Append the following lines to your main() function.
         }
 ```
 
-Next, we will run our code 
-Example Two -- List imagesPull an image and run the container
-connection to the socket and pull an image using the images.Pull() binding.
-To create the container spec, we use specgen.NewSpecGenerator() followed by
-calling containers.CreateWithSpec() to actually create a new container.
+Next, we will run our code:
 
 ```bash
 $ go run main.go
@@ -145,10 +141,14 @@ Storing signatures
 ```
 
 
-Example Two -- List Images
+2.  List images
 
+Pull an image and run the container
+connection to the socket and pull an image using the images.Pull() binding.
+To create the container spec, we use specgen.NewSpecGenerator() followed by
+calling containers.CreateWithSpec() to actually create a new container.
 
-Example Three -- Create and Start Container from Image
+3.  Create and Start Container from Image
 ```golang
         // Container create
         s := specgen.NewSpecGenerator(rawImage, false)
@@ -192,7 +192,7 @@ CONTAINER ID  IMAGE                                     COMMAND    CREATED      
 ```
 
 
-Example Four -- Inspect Container
+4. Inspect Container
 ```golang
         // Container inspect
         ctrData, err := containers.Inspect(conn, r.ID, nil)
@@ -215,7 +215,7 @@ Container running status is running
 $
 ```
 
-Example Five -- Stop Container
+5. Stop Container
 ```golang
         // Container stop
         fmt.Println("Stopping the container...")
@@ -246,7 +246,7 @@ $
 ```
 
 
-Complete Sample:
+6. Complete Sample:
 ```golang
 package main
 
