@@ -410,7 +410,9 @@ like so:
 $ podman --log-level=debug system service -t0
 ```
 
-This will echo additional messages, a snippet of which can be seen below:
+The `--log-level=debug` echoes all the logged requests and is useful to trace
+the execution path at a finer granularity. A snippet of a sample run looks like:
+
 ```
 INFO[0000] podman filtering at log level debug          
 DEBU[0000] Called service.PersistentPreRunE(podman --log-level=debug system service -t0) 
