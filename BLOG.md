@@ -477,9 +477,14 @@ $
 
 
 ## Participate
-Podman is being actively developed. Any issues with the bindings can be
+- Podman v2 is available for most major distributions along with MacOS and
+Windows. Installation details are available on the
+[official website](https://podman.io/getting-started/).
+
+- Any issues with the bindings can be
 reported [upstream](https://github.com/containers/podman/issues/new/choose).
-Check out the [official website](https://podman.io/community/) for more ways to
+
+- Check out the [official website](https://podman.io/community/) for more ways to
 get in touch with the community.
 
 
