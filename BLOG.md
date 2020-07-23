@@ -4,9 +4,9 @@ The examples should be heavily commented and do simple things without
 being too confusing.
 The audience is developers who may or may not be familiar with golang.
 
-Podman Go bindings
+# Podman Go bindings
 
-Introduction
+## Introduction
 
 In the recent release of Podman 2.0, we removed the experimental tag from
 its recently introduced RESTful service.  While it might be interesting
@@ -39,22 +39,22 @@ go 1.14
 require github.com/containers/libpod/v2 v2.0.2 // indirect
 ```
 
-How do I use them
+## How do I use them
 
 In this tutorial, you will learn through basic examples how to:
-```
-0. Start the Podman system service
-1. Connect to the Podman system service
-2. Pull an image
-3. List images
-4. Create and start a container from an image
-5. Inspect the container
-6. Stop the container
-7. Complete Sample
-8. Debugging tips
-```
 
-0. Start the Podman system service
+0. [Start the Podman system service](#example0)
+1. [Connect to the Podman system service](#example1)
+2. [Pull an image](#example2)
+3. [List images](#example3)
+4. [Create and start a container from an image](#example4)
+5. [Inspect the container](#example5)
+6. [Stop the container](#example6])
+7. [Complete Sample](#example7)
+8. [Debugging tips](#example8)
+
+
+### Start the Podman system service <a name="example0"></a>
 
 The recommended way to start podman system service in prod mode is via systemd
 socket-activation:
@@ -74,7 +74,7 @@ $ ls -al /run/user/1000/podman
 podman.sock
 ```
 
-1. Connect to the Podman system service
+### Connect to the Podman system service <a name="example1"></a>
 
 After you set up your basic main method, you need to create a connection
 that connects to the system service.  The critical piece of information
@@ -124,7 +124,7 @@ this context to direct the bindings to your connection. This can be
 seen in the examples below.
 
 
-2. Pull an image
+### Pull an image <a name="example2"></a>
 
 Next, we will pull an image using the images.Pull() binding.
 This binding takes three arguments:
@@ -164,11 +164,11 @@ Storing signatures
 ```
 
 
-3. List images
+### List images <a name="example3"></a>
 
 
 
-4. Create and Start Container from Image
+### Create and Start Container from Image <a name="example4"></a>
 
 To create the container spec, we use specgen.NewSpecGenerator() followed by
 calling containers.CreateWithSpec() to actually create a new container.
@@ -236,7 +236,7 @@ CONTAINER ID  IMAGE                                     COMMAND    CREATED      
 ```
 
 
-5. Inspect Container
+### Inspect Container <a name="example5"></a>
 
 Containers can be inspected using the containers.Inspect() binding.
 containers.Inspect() takes 3 args:
@@ -266,7 +266,7 @@ Container running status is running
 $
 ```
 
-6. Stop Container
+### Stop Container <a name="example6"></a>
 
 A container can be stopped by the containers.Stop() binding.
 containers.Stop() takes 3 args:
@@ -303,7 +303,7 @@ $
 ```
 
 
-7. Complete Sample:
+### Complete Sample <a name="example7"></a>
 
 The sample can be cloned from https://github.com/lsm5/bindings-sample . This
 repo includes the go module information required to build the code.
@@ -402,7 +402,7 @@ func main() {
 }
 ```
 
-8. Debugging tips
+### Debugging tips <a name="example8"></a>
 
 To debug in a dev setup, you can start the Podman system service in debug mode
 like so:
@@ -476,15 +476,17 @@ $
 ```
 
 
-Any issues with the bindings can be reported [upstream](https://github.com/containers/podman/issues/new/choose).
+## Participate
+Podman is being actively developed. Any issues with the bindings can be
+reported [upstream](https://github.com/containers/podman/issues/new/choose).
+Check out the [official website](https://podman.io/community/) for more ways to
+get in touch with the community.
 
 
-Wrap Up
+## Wrap Up
 
 - Podman v2 provides a set of Go bindings to allow developers to integrate Podman
 functionality conveniently in their Go application.
 
 - These Go bindings need Podman system service to be running in the
 background. This can be achieved using systemd socket activation. 
-
-- **ANYTHING ELSE??**
