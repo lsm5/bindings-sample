@@ -406,7 +406,17 @@ func main() {
                 return
         }
 
-        // TODO: Insert Image List code here
+		// List images (WIP)
+        imageSummary, err := images.List(conn, nil, nil)
+        if err != nil {
+                fmt.Println(err)
+                return
+        }
+        var names []string
+        for _, i := range imageSummary {
+                names = append(names, i.RepoTags...)
+        }
+        fmt.Println(names)
 
         // Container create
         s := specgen.NewSpecGenerator(rawImage, false)
