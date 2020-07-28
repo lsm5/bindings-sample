@@ -13,7 +13,11 @@ its recently introduced RESTful service.  While it might be interesting
 to interact with a RESTFul server using curl, using a set of Go based
 bindings is probably a more direct route to some production ready application.
 
-The podman Go bindings are a set of functions to allow developers to execute
+If you haven't yet, install Go https://golang.org/doc/install. 
+
+Be careful to double-check that the version of golang is new enough (i.e. `go version`), version 1.12.x or higher is supported. If needed, golang kits are available at https://golang.org/dl/.
+
+The Podman Go bindings are a set of functions to allow developers to execute
 Podman operations from within their Go based application. The Go bindings
 connect to a Podman service which can run locally or on a remote machine.
 You can perform many operations including pulling and listing images,
@@ -56,19 +60,22 @@ In this tutorial, you will learn through basic examples how to:
 
 ### Start the Podman system service <a name="example0"></a>
 
-The recommended way to start podman system service in prod mode is via systemd
-socket-activation:
-```bash
-$ systemctl --user start podman.socket
-```
-
-But for purposes of this demo, we will start the service using the podman
+For purposes of this demo, we will start the service using the Podman
 command itself. Open a terminal window and start the Podman system service:
+
 ```bash
 $ podman system service -t0
 ```
 
+Of note, the recommended way to start Podman system service in production mode is via systemd
+socket-activation:
+
+```bash
+$ systemctl --user start podman.socket
+```
+
 Open another terminal window and check if the Podman socket exists:
+
 ```bash
 $ ls -al /run/user/1000/podman
 podman.sock
@@ -128,9 +135,10 @@ seen in the examples below.
 
 Next, we will pull an image using the images.Pull() binding.
 This binding takes three arguments:
+
     - The context variable created earlier
-    - The image name
-    - Options for image pull
+        - The image name
+        - Options for image pull
 
 Append the following lines to your main() function.
 ```golang
@@ -166,33 +174,80 @@ Storing signatures
 
 ### List images <a name="example3"></a>
 
+Next, we will pull an image using the images.List() binding.
+This binding takes three arguments:
 
+   - The context variable created earlier
+     - An optional bool 'all' 
+       - An optional map of filters
+
+Append the following lines to your main() function.
+
+```golang
+         // List images
+        imageSummary, err := images.List(conn, nil, nil)
+        if err != nil {
+            fmt.Println(err)
+            return
+        }
+        var names []string
+        for _, i := range imageSummary {
+            names = append(names, i.RepoTags...)
+        }
+        fmt.Println(names)
+```
+
+Run it:
+
+```bash
+$ go run main.go
+Welcome to Go bindings tutorial
+Pulling image...
+[Images_here]
+$
+```
+
+The system service side should echo messages like so:
+
+```bash
+Trying to pull registry.fedoraproject.org/fedora:latest...
+Getting image source signatures
+Copying blob dd9f43919ba0 done
+Copying config 00ff39a8bf done
+Writing manifest to image destination
+Storing signatures
+[Images_here]
+```
+
+
+### 
 
 ### Create and Start Container from Image <a name="example4"></a>
 
 To create the container spec, we use specgen.NewSpecGenerator() followed by
 calling containers.CreateWithSpec() to actually create a new container.
-specgen.NewSpecGenerator takes 2 arguments:
+specgen.NewSpecGenerator() takes 2 arguments:
     - name of the image
-    - whether it's a rootfs
+        - whether it's a rootfs
 
-containers.CreateWithSpec takes 2 arguments
+containers.CreateWithSpec() takes 2 arguments
     - the context created earlier
-    - the spec created by NewSpecGenerator
+        - the spec created by NewSpecGenerator
 
 Next, the container is actually started using the containers.Start() binding.
 containers.Start() takes three args:
     - the context
-    - the name or ID of the container created
-    - an optional parameter for detach keys
+        - the name or ID of the container created
+        - an optional parameter for detach keys
 
 After the container is started, it's a good idea to ensure the container is in
 a running state before you proceed with further operations. The
 containers.Wait() takes care of that.
 containers.Wait() takes three args:
     - the context
-    - the name or ID of the container created
-    - container state (running/paused/stopped)
+        - the name or ID of the container created
+        - container state (running/paused/stopped)
+
 ```golang
         // Container create
         s := specgen.NewSpecGenerator(rawImage, false)
@@ -270,9 +325,11 @@ $
 
 A container can be stopped by the containers.Stop() binding.
 containers.Stop() takes 3 args:
+
     - context
-    - image name or ID
-    - optional timeout
+        - image name or ID
+        - optional timeout
+
 ```golang
         // Container stop
         fmt.Println("Stopping the container...")
@@ -406,6 +463,7 @@ func main() {
 
 To debug in a dev setup, you can start the Podman system service in debug mode
 like so:
+
 ```bash
 $ podman --log-level=debug system service -t0
 ```
