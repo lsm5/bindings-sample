@@ -73,6 +73,15 @@ func main() {
 		return
 	}
 
+	// List containers
+	var latestContainers = 1
+	containerLatestList, err := containers.List(conn, nil, nil, &latestContainers, nil, nil, nil)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Printf("Latest container is %s\n", containerLatestList[0].Names[0])
+
 	// Container inspect
 	ctrData, err := containers.Inspect(conn, r.ID, nil)
 	if err != nil {
